@@ -1,0 +1,74 @@
+---
+title: "Insight into Movie Ratings data"
+output: 
+  html_document: 
+    fig_height: 4
+    highlight: pygments
+    theme: spacelab
+---
+
+## Setup
+
+### Load packages
+
+```{r load-packages, message = FALSE}
+library(ggplot2)
+```
+
+### Load data
+
+```{r load-data}
+setwd("F:\\Online Course\\R Programming (Udemy)\\Section6")
+mov <- read.csv("Section6-Homework-Data.csv")
+```
+
+### Exploring data frame
+
+head(mov) #top rows
+summary(mov) #column summaries
+str(mov) #structure of the dataset
+
+* * *
+
+## Cleaning the data
+
+```{r warning=FALSE}
+filt <- (mov$Genre == "action") | (mov$Genre == "adventure") | (mov$Genre == "animation") | (mov$Genre == "comedy") | (mov$Genre == "drama")
+
+filt2 <- (mov$Studio == "Buena Vista Studios") | (mov$Studio == "WB") | (mov$Studio == "Fox") | (mov$Studio == "Universal") | (mov$Studio == "Sony") | (mov$Studio == "Paramount Pictures")
+
+mov2 <- mov[filt & filt2,]
+```
+
+### Constructing the plot
+```{r warning=FALSE}
+p <- ggplot(data=mov2, aes(x=Genre, y=Gross...US)) + 
+        geom_jitter(aes(size=Budget...mill., colour=Studio)) + 
+        geom_boxplot(alpha=0.7, outlier.color = NA) +
+        xlab("Genre") +
+        ylab("Gross % US") +
+        ggtitle("Domestic Gross % by Genre") + 
+        theme(
+          text = element_text(family="Comic Sans MS"),
+          axis.title.x = element_text(colour="Blue", size=12),
+          axis.title.y = element_text(colour="Blue", size=12),
+          axis.text.x = element_text(size=10),
+          axis.text.y = element_text(size=10),
+          plot.title = element_text(colour="Black", size=15),
+          legend.title = element_text(size=12),
+          legend.text = element_text(size=10)
+        )
+p$labels$size = "Budget $M"
+p
+
+```
+
+### The data story
+We can see that Action genre has been popular among all genres with most number of movies, and drama is the least popular genre. Almost 40-50% of the gross comes from US region in all the genres.
+
+### A cool insight
+```{r}
+ggplot(data=mov, aes(x=Day.of.Week)) + geom_bar()
+
+##Notice? No movies are released on a Monday. Ever.
+```
